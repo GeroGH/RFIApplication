@@ -1,0 +1,295 @@
+/*****************************************************************************
+object(int dummy_number, char *object_name)
+{
+
+    attribute( char *attribute_name,
+               char *label_text,
+               int   value_type,
+               char *field_format,
+               int   special_flag, 
+               int   check_switch,
+               char *attribute_value_max,
+               char *attribute_value_min )
+    {
+        value( char *attribute_value,
+               int   default_switch )
+    }
+    modify( int modify_type )
+}
+
+where object is part, welding or bolt
+
+****************************************************************************/
+
+/*---------------------------------------------------------------------------
+object(int *dummy_number, char *object_name)
+
+dummy_number:       dummy parameter
+object_name:        unique name for object (part || bolt || welding ...)
+
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+attribute( char *attribute_name,
+           char *label_text,
+           int   value_type,
+           char *field_format,
+           int   special_flag, 
+           int   check_switch,
+           char *attribute_value_max,
+           char *attribute_value_min )
+
+     attribute_name: unique name of attribute,
+                     used for inquiring attribute value
+         label_text: label text shown in dialog
+         value_type: integer || float || string || option || label || material ||
+                     profile || file_in || file_out || bolt_standard || bolt_size ||
+                     ratio || strain || angle || deformation || dimension ||
+                     radiusofinertia || area || areaperlength || sectionmodulus ||
+                     momentofinertia || torsionconstant || warpingconstant ||
+                     force || weight || distribload || springconstant || surfaceload
+                     strength || modulus || density || moment || distribmoment ||
+                     rotspringconst || temperature || thermdilatcoeff
+       field_format: C-like format definition for dialog field
+       special_flag: yes || no
+                     For parts         : consider in numering
+                     For drawings      : display the attribute's value in drawing list
+                     For other elements: (no effect)
+
+                     Note: Special flag is not considered for attribute "FixedMainView".
+
+       check_switch: none
+attribute_value_max: allowed maximum value of attribute
+attribute_value_min: allowed minimum value of attribute
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+value( char *attribute_value,
+       int   default_switch )
+
+attribute_value:     value of attribute
+default_switch:      In case of option menu attribute one of the values
+                     can be set to default value. If none is set to default
+                     the first one is taken. In case of value field
+                     default has no meaning (value is always default).
+                      	2 for default, which is not stored to the database
+                        1 for default, which is stored to the database
+                        0 for no default
+		     2 is recommended instead of 1 to avoid unnecessarily
+		     increasing the database size.
+
+---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------
+modify( int modify_type )
+
+modify_type:         0 modify not possible
+                     1 modify is possible
+---------------------------------------------------------------------------*/
+
+/***************************************************************************/
+/* User defined attributes for objects */
+/***************************************************************************/
+/***************************************************************************/
+/* Part attributes  */
+/***************************************************************************/
+
+part(0,"Part")
+{
+  tab_page("Parameters")
+  {
+    attribute("USER_FIELD_4", "Variation No                                     ", string, "%s", no, none, "0.0", "0.0")   
+    {       
+        value("", 0)   
+    }
+
+    attribute("USER_FIELD_1", "Finish_Line2", string, "%s", no, none, "0.0", "0.0")
+    {
+        value("", 0)
+    }
+
+    attribute("USER_FIELD_2", "Finish_Line3", string, "%s", no, none, "0.0", "0.0")
+    {
+        value("", 0)
+    }
+
+    attribute("USER_FIELD_3", "Finish_Line4", string, "%s", no, none, "0.0", "0.0")
+    {
+        value("", 0)
+    } 
+
+    unique_attribute("PRELIM_MARK", "Preliminary Mark                (Does Not Copy)", string, "%s", no, none, "0.0", "0.0")
+    {
+        value("", 0)
+    }
+
+    attribute("cambering", "j_cambering", string, "%s", yes, none, "0.0", "0.0")
+    {
+        value("0", 0)
+    }
+
+    attribute("xs_shorten", "Shorten", distance, "%d", yes, none, "0.0", "0.0") 
+    {
+        value("0.0", 0)
+    }
+
+    attribute("comment", "Comment", string, "%s", no, none, "0.0", "0.0") 
+    {
+        value("", 0)
+    }
+
+    attribute("ASSY_STATUS", "Assembly Status          (Effects Numbering)", option, "%s", yes, none, "0.0", "0.0")
+        {
+            value("", 1)
+            value("In Abeyance", 0)
+            value("Awaiting Information", 0)
+            value("On Hold", 0) 
+            value("Cleared", 0)          
+    }
+
+    attribute("USER_PHASE", "User Phase", string, "%s", no, none, "0.0", "0.0")
+    {
+        value("", 0)
+    }  
+    
+    attribute("conn_code", "Connection End Codes and Marks     (Does Not Copy)", label, "%s", no, none, "0.0", "0.0")
+
+    picture("dia_part_move_end_1", 40, 2, 30, 320)
+    picture("dia_part_move_end_2", 40, 2, 30, 350)     
+    
+    attribute("start", "Start", label, "%s", no, none, "0.0", "0.0", 60, 317)
+    attribute("end", "End", label, "%s", no, none, "0.0", "0.0", 60, 347)
+    
+    unique_attribute("CONN_CODE_END1", "", string, "%s", no, none, "0.0", "0.0",220,317,120)
+    {
+        value("", 0)
+    }
+
+    unique_attribute("CONN_CODE_END2", "", string, "%s", no, none, "0.0", "0.0",220,347,120)
+    {
+        value("", 0)
+    }	
+
+    attribute("Label_SS", "SectionSize", label, "%s", no, none, "0.0", "0.0",30,377)	
+	
+	attribute("SectionSize", "", string, "%s", no, none, "0.0", "0.0",220,377,310) 
+    {
+        value("", 0)
+    }
+  }
+
+  tab_page("BEL_RFI")
+  {
+	attribute("RFI_No", "No:",                    label, "%s", no, none, "0.0", "0.0",70,20)
+	attribute("RFI_Subject", "Subject:",           label, "%s", no, none, "0.0", "0.0",170,20)
+	attribute("RFI_ClosedOut", "Status:",      label, "%s", no, none, "0.0", "0.0",620,20)
+	attribute("OutstandingRFIs", "Remaining:",              label, "%s", no, none, "0.0", "0.0",45,210)
+        
+	unique_attribute("RFI1", "",        string, "%s", no, none, "0.0", "0.0",70,50,50)    { value("", 0)}
+	unique_attribute("RFI1Subject", "", string, "%s", no, none, "0.0", "0.0",170,50,400)  { value("", 0)}
+	unique_attribute("RFI1Closed", "",  string, "%s", no, none, "0.0", "0.0",620,50,100)   { value("", 0)}
+	                                                                                        
+	unique_attribute("RFI2", "",        string, "%s", no, none, "0.0", "0.0",70,80,50)    { value("", 0)}
+	unique_attribute("RFI2Subject", "", string, "%s", no, none, "0.0", "0.0",170,80,400)  { value("", 0)}
+	unique_attribute("RFI2Closed", "",  string, "%s", no, none, "0.0", "0.0",620,80,100)   { value("", 0)}
+	                                                                                        
+	unique_attribute("RFI3", "",        string, "%s", no, none, "0.0", "0.0",70,110,50)   { value("", 0)}
+	unique_attribute("RFI3Subject", "", string, "%s", no, none, "0.0", "0.0",170,110,400) { value("", 0)}
+	unique_attribute("RFI3Closed", "",  string, "%s", no, none, "0.0", "0.0",620,110,100)  { value("", 0)}
+	                                                                                        
+	unique_attribute("RFI4", "",        string, "%s", no, none, "0.0", "0.0",70,140,50)   { value("", 0)}
+	unique_attribute("RFI4Subject", "", string, "%s", no, none, "0.0", "0.0",170,140,400) { value("", 0)}
+	unique_attribute("RFI4Closed", "",  string, "%s", no, none, "0.0", "0.0",620,140,100)  { value("", 0)}
+	                                                                                        
+	unique_attribute("RFI5", "",        string, "%s", no, none, "0.0", "0.0",70,170,50)   { value("", 0)}
+	unique_attribute("RFI5Subject", "", string, "%s", no, none, "0.0", "0.0",170,170,400) { value("", 0)}
+	unique_attribute("RFI5Closed", "",  string, "%s", no, none, "0.0", "0.0",620,170,100)  { value("", 0)}
+                                                                                            
+	unique_attribute("RFIcombined", "", string, "%s", no, none, "0.0", "0.0",170,210,400) { value("", 0)}
+  }
+
+  tab_page("BEL_UniClass")
+  {
+	unique_attribute("Ss.Description", "Ss.Description:",   string, "%s", no, none, "0.0", "0.0", 400, 20, 400) { value("", 0) }
+	unique_attribute("Ss.Number", "Ss.Number:",             string, "%s", no, none, "0.0", "0.0", 400, 50, 400) { value("", 0) }
+	unique_attribute("Pr.Description", "Pr.Description:",   string, "%s", no, none, "0.0", "0.0", 400, 80, 400) { value("", 0) }
+	unique_attribute("Pr.Number", "Pr.Number:",             string, "%s", no, none, "0.0", "0.0", 400, 110, 400) { value("", 0) }
+	unique_attribute("BGL_Object_Name", "BGL_Object_Name:", string, "%s", no, none, "0.0", "0.0", 400, 140, 400) { value("", 0) }
+  }
+
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
+
+/***************************************************************************/
+/* Beam attributes  */
+/***************************************************************************/
+beam(0,"Beam")
+{
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
+/***************************************************************************/
+/* Column attributes  */
+/***************************************************************************/
+column(0,"Column")
+{
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
+/***************************************************************************/
+/* Beam/Orthogonal attributes  */
+/***************************************************************************/
+beamortho(0,"Beam/orthogonal")
+{
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
+/***************************************************************************/
+/* Twin profile attributes  */
+/***************************************************************************/
+twinprofile(0,"Twin profile")
+{
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
+/***************************************************************************/
+/* Contour plate attributes  */
+/***************************************************************************/
+contourplate(0,"Contour plate")
+{
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
+/***************************************************************************/
+/* Folded plate attributes  */
+/***************************************************************************/
+foldedplate(0,"Folded plate")
+{
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
+/***************************************************************************/
+/* Concrete beam attributes  */
+/***************************************************************************/
+concrete_beam(0,"Concrete beam")
+{
+ tab_page("Parameters","BEL",1)
+ tab_page("BEL_RFI","BEL_RFI",2)
+ tab_page("BEL_UniClass","BEL_UniClass",3)
+ modify(0)
+}
