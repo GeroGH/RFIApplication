@@ -49,6 +49,7 @@
             this.ButtonRepresentationRfiNo = new System.Windows.Forms.Button();
             this.ButtonRepresentationPhase = new System.Windows.Forms.Button();
             this.ExcelFileLocationBox = new System.Windows.Forms.GroupBox();
+            this.OpenExcelFile = new System.Windows.Forms.Button();
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
             this.ExcelFileColumnAndRowsBox = new System.Windows.Forms.GroupBox();
             this.checkBoxExcelNotDefault = new System.Windows.Forms.CheckBox();
@@ -91,7 +92,7 @@
             this.TextBoxPath.Location = new System.Drawing.Point(18, 19);
             this.TextBoxPath.Multiline = true;
             this.TextBoxPath.Name = "TextBoxPath";
-            this.TextBoxPath.Size = new System.Drawing.Size(627, 46);
+            this.TextBoxPath.Size = new System.Drawing.Size(306, 46);
             this.TextBoxPath.TabIndex = 2;
             this.toolTip.SetToolTip(this.TextBoxPath, "Current location of the excel file. The text can be directly edited");
             this.TextBoxPath.TextChanged += new System.EventHandler(this.TextBoxPath_TextChanged);
@@ -267,6 +268,7 @@
             // 
             // ExcelFileLocationBox
             // 
+            this.ExcelFileLocationBox.Controls.Add(this.OpenExcelFile);
             this.ExcelFileLocationBox.Controls.Add(this.GroupBox1);
             this.ExcelFileLocationBox.Controls.Add(this.TextBoxPath);
             this.ExcelFileLocationBox.Location = new System.Drawing.Point(12, 12);
@@ -276,6 +278,16 @@
             this.ExcelFileLocationBox.TabStop = false;
             this.ExcelFileLocationBox.Text = "Excel File Location:";
             this.toolTip.SetToolTip(this.ExcelFileLocationBox, "Current location of the excel file. The text can be directly edited");
+            // 
+            // OpenExcelFile
+            // 
+            this.OpenExcelFile.Location = new System.Drawing.Point(327, 19);
+            this.OpenExcelFile.Name = "OpenExcelFile";
+            this.OpenExcelFile.Size = new System.Drawing.Size(317, 46);
+            this.OpenExcelFile.TabIndex = 10;
+            this.OpenExcelFile.Text = "Open Excel File";
+            this.OpenExcelFile.UseVisualStyleBackColor = true;
+            this.OpenExcelFile.Click += new System.EventHandler(this.OpenExcelFile_Click);
             // 
             // GroupBox1
             // 
@@ -493,6 +505,7 @@
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.CheckBox checkBoxExcelNotDefault;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Button OpenExcelFile;
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -758,6 +759,11 @@ namespace ReadRfiFromExcel
                 this.TextBoxSubjectColumn.Enabled = false;
                 this.TextBoxClosedColumn.Enabled = false;
             }
+        }
+
+        private void OpenExcelFile_Click(object sender, EventArgs e)
+        {
+            Process.Start(this.TextBoxPath.Text);
         }
     }
 }

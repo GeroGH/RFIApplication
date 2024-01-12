@@ -88,8 +88,8 @@
     </Compile>
     <None Include="Help\RFI Modelling Application Instruction 2021 12 13.docx" />
     <None Include="Help\RFI Modelling Application Instruction 2021 12 13.pdf" />
-    <None Include="Help\RFI Modelling Application Set Up 2021 12 13.docx" />
-    <None Include="Help\RFI Modelling Application Set Up 2021 12 13.pdf" />
+    <None Include="Help\RFI Modelling Application Set Up 2023 07 11.docx" />
+    <None Include="Help\RFI Modelling Application Set Up 2023 07 11.pdf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
