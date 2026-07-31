@@ -14,11 +14,13 @@ namespace ReadRfiFromExcel
     public partial class MainForm : Form
     {
         private readonly List<RFI> RfiList = new List<RFI>();
+        private readonly Dictionary<string, RFI> RfiDictionary = new Dictionary<string, RFI>();
         private readonly List<Part> Parts = new List<Part>();
         private string InfoFileLocation;
         public MainForm()
         {
             this.InitializeComponent();
+            this.TopMost = true;
         }
 
         private void ButtonUpdateSelectedParts_Click(object sender, EventArgs e)
@@ -77,46 +79,12 @@ namespace ReadRfiFromExcel
             {
                 var otstanding = new List<string>();
 
-                this.CheckFieldStatus(part, otstanding, "RFI1");
-                this.CheckFieldStatus(part, otstanding, "RFI2");
-                this.CheckFieldStatus(part, otstanding, "RFI3");
-                this.CheckFieldStatus(part, otstanding, "RFI4");
-                this.CheckFieldStatus(part, otstanding, "RFI5");
-
-                part.SetUserProperty("RFIcombined", string.Join(", ", otstanding));
-                this.WriteLabelInMiddleOfPart(part, otstanding);
-            }
-        }
-
-        private void WriteLabelInMiddleOfPart(Part part, List<string> otstanding)
-        {
-            var sx = 0.0;
-            part.GetReportProperty("START_X_IN_WORK_PLANE", ref sx);
-            var sy = 0.0;
-            part.GetReportProperty("START_Y_IN_WORK_PLANE", ref sy);
-            var sz = 0.0;
-            part.GetReportProperty("START_Z_IN_WORK_PLANE", ref sz);
-
-            var ex = 0.0;
-            part.GetReportProperty("END_X_IN_WORK_PLANE", ref ex);
-            var ey = 0.0;
-            part.GetReportProperty("END_Y_IN_WORK_PLANE", ref ey);
-            var ez = 0.0;
-            part.GetReportProperty("END_Z_IN_WORK_PLANE", ref ez);
-
-            var midPoint = new Tekla.Structures.Geometry3d.Point((sx + ex) / 2, (sy + ey) / 2, (sz + ez) / 2);
-
-            var drawer = new GraphicsDrawer();
-            var ass = part.GetAssembly();
-            var mainPart = ass.GetMainPart() as Part;
-            if (part.Equals(mainPart))
-            {
-                if (otstanding.Count == 0)
+                for (var i = 1; i <= 5; i++)
                 {
-                    return;
+                    this.CheckFieldStatus(part, otstanding, $"RFI{i}");
                 }
 
-                drawer.DrawText(midPoint, @"RFI No: " + string.Join(", ", otstanding), new Color(0.0, 0.0, 0.0));
+                SetUserPropertyIfChanged(part, "RFIcombined", string.Join(", ", otstanding));
             }
         }
 
@@ -136,11 +104,10 @@ namespace ReadRfiFromExcel
         {
             foreach (var part in this.Parts)
             {
-                this.SetFieldsAsPerRfiList(part, "RFI1");
-                this.SetFieldsAsPerRfiList(part, "RFI2");
-                this.SetFieldsAsPerRfiList(part, "RFI3");
-                this.SetFieldsAsPerRfiList(part, "RFI4");
-                this.SetFieldsAsPerRfiList(part, "RFI5");
+                for (var i = 1; i <= 5; i++)
+                {
+                    this.SetFieldsAsPerRfiList(part, $"RFI{i}");
+                }
             }
         }
 
@@ -149,13 +116,10 @@ namespace ReadRfiFromExcel
             var fieldValue = string.Empty;
             part.GetReportProperty(RfiField, ref fieldValue);
 
-            foreach (var rfi in this.RfiList)
+            if (this.RfiDictionary.TryGetValue(fieldValue, out var rfi))
             {
-                if (rfi.Number == fieldValue)
-                {
-                    part.SetUserProperty(RfiField + "Subject", rfi.Subject);
-                    part.SetUserProperty(RfiField + "Closed", rfi.Closed);
-                }
+                SetUserPropertyIfChanged(part, RfiField + "Subject", rfi.Subject);
+                SetUserPropertyIfChanged(part, RfiField + "Closed", rfi.Closed);
             }
         }
 
@@ -163,18 +127,17 @@ namespace ReadRfiFromExcel
         {
             foreach (var part in this.Parts)
             {
-                CleanUpOldFiledValues(part, "RFI1");
-                CleanUpOldFiledValues(part, "RFI2");
-                CleanUpOldFiledValues(part, "RFI3");
-                CleanUpOldFiledValues(part, "RFI4");
-                CleanUpOldFiledValues(part, "RFI5");
+                for (var i = 1; i <= 5; i++)
+                {
+                    CleanUpOldFiledValues(part, $"RFI{i}");
+                }
             }
         }
 
         private static void CleanUpOldFiledValues(Part part, string field)
         {
-            part.SetUserProperty(field + "Subject", string.Empty);
-            part.SetUserProperty(field + "Closed", string.Empty);
+            SetUserPropertyIfChanged(part, field + "Subject", string.Empty);
+            SetUserPropertyIfChanged(part, field + "Closed", string.Empty);
         }
 
         private void CollectPartsFromTheModel()
@@ -312,6 +275,16 @@ namespace ReadRfiFromExcel
                         foreach (System.Data.DataRow row in dataTable.Rows)
                         {
                             this.RfiList.Add(new RFI(row));
+                        }
+
+                        this.RfiDictionary.Clear();
+
+                        foreach (var rfi in this.RfiList)
+                        {
+                            if (!this.RfiDictionary.ContainsKey(rfi.Number))
+                            {
+                                this.RfiDictionary.Add(rfi.Number, rfi);
+                            }
                         }
                     }
                 }
@@ -538,11 +511,10 @@ namespace ReadRfiFromExcel
         {
             foreach (var part in this.Parts)
             {
-                part.SetUserProperty("RFI1", "");
-                part.SetUserProperty("RFI2", "");
-                part.SetUserProperty("RFI3", "");
-                part.SetUserProperty("RFI4", "");
-                part.SetUserProperty("RFI5", "");
+                for (var i = 1; i <= 5; i++)
+                {
+                    part.SetUserProperty($"RFI{i}", "");
+                }
             }
         }
 
@@ -595,11 +567,10 @@ namespace ReadRfiFromExcel
                 tempRfiList = tempRfiList.Distinct().ToList();
                 tempRfiList.Sort();
 
-                part.SetUserProperty("RFI1", "");
-                part.SetUserProperty("RFI2", "");
-                part.SetUserProperty("RFI3", "");
-                part.SetUserProperty("RFI4", "");
-                part.SetUserProperty("RFI5", "");
+                for (var i = 1; i <= 5; i++)
+                {
+                    SetUserPropertyIfChanged(part, $"RFI{i}", "");
+                }
 
                 var count = 1;
                 foreach (var tempRfi in tempRfiList)
@@ -611,7 +582,8 @@ namespace ReadRfiFromExcel
         }
         private void AssignValues(string selectedRfiString)
         {
-            var maxRfiNumberRows = 5;
+            const int maxRfiNumberRows = 5;
+
             foreach (var part in this.Parts)
             {
                 var RfiNumbersList = new List<int>();
@@ -652,7 +624,7 @@ namespace ReadRfiFromExcel
         }
         private void RemoveValues(string selectedRfiString)
         {
-            var maxRfiNumberRows = 5;
+            const int maxRfiNumberRows = 5;
 
             foreach (var part in this.Parts)
             {
@@ -764,6 +736,51 @@ namespace ReadRfiFromExcel
         private void OpenExcelFile_Click(object sender, EventArgs e)
         {
             Process.Start(this.TextBoxPath.Text);
+        }
+        private static void SetUserPropertyIfChanged(Part part, string propertyName, string newValue)
+        {
+            var currentValue = string.Empty;
+
+            part.GetUserProperty(propertyName, ref currentValue);
+
+            if (currentValue == newValue)
+            {
+                return;
+            }
+
+            part.SetUserProperty(propertyName, newValue);
+        }
+
+        private void WriteLabelInMiddleOfPart(Part part, List<string> otstanding)
+        {
+            var sx = 0.0;
+            part.GetReportProperty("START_X_IN_WORK_PLANE", ref sx);
+            var sy = 0.0;
+            part.GetReportProperty("START_Y_IN_WORK_PLANE", ref sy);
+            var sz = 0.0;
+            part.GetReportProperty("START_Z_IN_WORK_PLANE", ref sz);
+
+            var ex = 0.0;
+            part.GetReportProperty("END_X_IN_WORK_PLANE", ref ex);
+            var ey = 0.0;
+            part.GetReportProperty("END_Y_IN_WORK_PLANE", ref ey);
+            var ez = 0.0;
+            part.GetReportProperty("END_Z_IN_WORK_PLANE", ref ez);
+
+            var midPoint = new Tekla.Structures.Geometry3d.Point((sx + ex) / 2, (sy + ey) / 2, (sz + ez) / 2);
+
+            var drawer = new GraphicsDrawer();
+            var ass = part.GetAssembly();
+            var mainPart = ass.GetMainPart() as Part;
+            if (part.Equals(mainPart))
+            {
+                if (otstanding.Count == 0)
+                {
+                    return;
+                }
+
+                drawer.DrawText(midPoint, @"RFI No: " + string.Join(", ", otstanding), new Color(0.0, 0.0, 0.0));
+            }
         }
     }
 }

@@ -454,7 +454,7 @@
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "RFI Modelling Application";
+            this.Text = "RFI Modelling Application v.31.07.2026";
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).EndInit();
             this.ExcelFileLocationBox.ResumeLayout(false);
